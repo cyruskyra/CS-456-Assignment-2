@@ -8,11 +8,13 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 public class receiver {
 
     private static Logger logger = Logger.getLogger(sender.class.getName());
+    private static Logger ARRIVAL_LOGGER = Logger.getLogger("arrival");
 
     private static InetAddress netAddress;
     private static Integer netPort;
@@ -26,7 +28,11 @@ public class receiver {
     public static void main(String[] args) {
 
         try {
-            Loggers.setup();
+            FileHandler arrivalfh = new FileHandler("./logs/arrival.log", true);
+            ARRIVAL_LOGGER.addHandler(arrivalfh);
+            LoggerFormatter arrivalformatter = new LoggerFormatter();
+            arrivalfh.setFormatter(arrivalformatter);
+            ARRIVAL_LOGGER.setUseParentHandlers(false);
         } catch (IOException e) {
             logger.warning(e.toString());
         }
@@ -48,7 +54,7 @@ public class receiver {
                 receiverSocket.receive(rPacket);
                 byte[] receivedData = rPacket.getData();
                 packet p = packet.parseUDPdata(receivedData);
-                Loggers.ARRIVAL_LOGGER.info(String.valueOf(p.getSeqNum()));
+                ARRIVAL_LOGGER.info(String.valueOf(p.getSeqNum()));
                 if (p.getType() == 2 && p.getSeqNum() == seqnum) {
                     eotReceived = true;
                     sendUtil(sendSocket, packet.createEOT(seqnum));

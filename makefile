@@ -1,18 +1,24 @@
-JFLAGS = -g
-JC = javac
-.SUFFIXES: .java .class
-.java.class:
-        $(JC) $(JFLAGS) src/*.java
+###################################################
+# Variables:
+###################################################
 
-CLASSES = \
-        Loggers.java \
-        packet.java \
-        receiver.java \
-        sender.java 
+# name of the package (Note that we need the "/")
+package=src/
 
-default: classes
+###################################################
+# Targets:
+###################################################
+	
+jc javac c compile: 
+	javac src/*.java
 
-classes: $(CLASSES:.java=.class)
+###################################################
+# Housekeeping:
+###################################################
 
 clean:
-        $(RM) *.class
+	-rm -f ${package}*.class *~
+
+###################################################
+# End
+###################################################

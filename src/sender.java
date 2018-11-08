@@ -7,15 +7,18 @@ import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 public class sender {
 
     private static Logger logger = Logger.getLogger(sender.class.getName());
+    private static Logger SEQNUM_LOGGER = Logger.getLogger("seqnum");
+    private static Logger ACK_LOGGER = Logger.getLogger("ack");
 
     // Shared variables
     private static final int windowSize = 10;
-    private static List outstandingAcks = Collections.synchronizedList(new ArrayList<Integer>());
+    private static List<Integer> outstandingAcks = Collections.synchronizedList(new ArrayList<Integer>());
     private static AtomicInteger latestAck = new AtomicInteger();
     private static ArrayList<packet> packetList;
     private static final Object lock = new Object();
@@ -29,7 +32,17 @@ public class sender {
     public static void main(String[] args) throws InterruptedException {
 
         try {
-            Loggers.setup();
+            FileHandler seqnumfh = new FileHandler("/logs/seqnum.log");
+            SEQNUM_LOGGER.addHandler(seqnumfh);
+            LoggerFormatter seqnumformatter = new LoggerFormatter();
+            seqnumfh.setFormatter(seqnumformatter);
+            SEQNUM_LOGGER.setUseParentHandlers(false);
+
+            FileHandler ackfh = new FileHandler("/logs/ack.log");
+            ACK_LOGGER.addHandler(ackfh);
+            LoggerFormatter ackformatter = new LoggerFormatter();
+            ackfh.setFormatter(ackformatter);
+            ACK_LOGGER.setUseParentHandlers(false);
         } catch (IOException e) {
             logger.warning(e.toString());
         }
@@ -51,11 +64,13 @@ public class sender {
                 new SendCallable(),
                 new ListenCallable()
         );
+        logger.info("Executor invoking callables");
         executor.invokeAll(callables);
         executor.shutdown();
         if (executor.awaitTermination(0, TimeUnit.SECONDS)) {
             executor.shutdownNow();
         }
+        logger.info("Executor shutting down");
     }
 
     // Threads
@@ -138,7 +153,7 @@ public class sender {
                     byte[] receivedData = rPacket.getData();
                     packet ackPacket = packet.parseUDPdata(receivedData);
                     int seqnum = ackPacket.getSeqNum();
-                    Loggers.ACK_LOGGER.info(String.valueOf(seqnum));
+                    ACK_LOGGER.info(String.valueOf(seqnum));
                     int type = ackPacket.getType();
                     ArrayList<Integer> removeList = new ArrayList<>();
                     if (type == 2) {
@@ -198,6 +213,6 @@ public class sender {
         byte[] UDPData = p.getUDPdata();
         DatagramPacket UDPp = new DatagramPacket(UDPData, UDPData.length, netAddress, netPort);
         ds.send(UDPp);
-        Loggers.SEQNUM_LOGGER.info(String.valueOf(p.getSeqNum()));
+        SEQNUM_LOGGER.info(String.valueOf(p.getSeqNum()));
     }
 }
