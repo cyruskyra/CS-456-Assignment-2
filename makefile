@@ -1,23 +1,20 @@
 ###################################################
-# Variables:
-###################################################
-
-# name of the package (Note that we need the "/")
-package=src/
-
-###################################################
 # Targets:
 ###################################################
 	
 jc javac c compile: 
-	javac src/*.java
+	javac src/receiver/*.java
+	javac src/sender/*.java
+	javac src/utility/*.java
 
 ###################################################
 # Housekeeping:
 ###################################################
 
 clean:
-	-rm -f ${package}*.class *~
+	-rm -f src/receiver/*.class *~
+	-rm -f src/sender/*.class *~
+	-rm -f src/utility/*.class *~
 
 ###################################################
 # End

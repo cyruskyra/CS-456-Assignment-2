@@ -1,4 +1,4 @@
-package src;
+package src.utility;
 // common packet class used by both SENDER and RECEIVER
 
 import java.nio.ByteBuffer;
