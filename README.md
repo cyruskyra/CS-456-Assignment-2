@@ -13,7 +13,7 @@ chmod +x ./src/sender/sender.class
 ```
 Start the emulator on your first machine:
 ```
-./nEmulator-linux386 <PORT_1> <RECEIVER_ADDRESS> <PORT_2> <PORT_3> <SENDER_ADDRESS> <PORT_4> <DELAY> <LOSS> <VERBOSE>
+./nEmulator-linux386 <PORT_1> <RECEIVER_ADDRESS> <PORT_2> <PORT_3> <SENDER_ADDRESS> <PORT_4> <DELAY_TIME> <LOSS_PROB> <VERBOSE_MODE>
 ```
 where 
 * <PORT_1> is the emulator's receiving UDP port number in the forward (sender) direction
@@ -22,9 +22,9 @@ where
 * <PORT_3> is the emulator's receiving UDP port number in the backward (receiver) direction
 * <SENDER_ADDRESS> is the sender’s network address
 * <PORT_4> is the sender’s receiving UDP port number
-* <DELAY> is the maximum delay of the link in units of millisecond (>= 0)
-* <LOSS> is the packet discard probability (0 - 1)
-* <VERBOSE> is the verbose-mode setting (0 or 1)
+* <DELAY_TIME> is the maximum delay of the link in units of millisecond (>= 0)
+* <LOSS_PROB> is the packet discard probability (0 - 1)
+* <VERBOSE_MODE> is the verbose-mode setting (0 or 1)
 
 Then start the receiver on your second machine:
 ```
